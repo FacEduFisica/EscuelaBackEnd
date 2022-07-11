@@ -161,7 +161,7 @@ class PersonaController extends Controller
 
     public function storeKidStudent(Request $request)
     {
-        $kidStudent = Validator::make($request->all(), [
+        $validatekidStudent = Validator::make($request->all(), [
             'tipo_documento' => 'required|in:CC,TI,CE,RC,Otro',
             'numero_documento' => 'required|numeric|unique:personas',
             'departamento_expedicion' => 'required|string',
@@ -188,17 +188,40 @@ class PersonaController extends Controller
             'estudia' => 'string',
             'grado_escolar' => 'in:Primaria incompleta,Primaria completa,Secundaria incompleta,Secundaria completa,Universitario,Otro',
         ]);
+		$user = auth()->user();
+		$kidStudent = new Persona();
+        $kidStudent->id_usuario = $user->id;
+        $kidStudent->user_type = 'Niño';
+        $kidStudent->tipo_documento = $request->tipo_documento;
+        $kidStudent->numero_documento = $request->numero_documento;
+        $kidStudent->departamento_expedicion = $request->departamento_expedicion;
+        $kidStudent->municipio_expedicion = $request->municipio_expedicion;
+        $kidStudent->nombre = $request->nombre;
+        $kidStudent->apellido = $request->apellido;
+        $kidStudent->fecha_nacimiento = $request->fecha_nacimiento['year'].'-'.$request->fecha_nacimiento['month'].'-'.$request->fecha_nacimiento['day'];
+        $kidStudent->lugar_nacimiento = $request->lugar_nacimiento;
+        $kidStudent->genero = $request->genero;
+        $kidStudent->direccion = $request->direccion;
+        $kidStudent->telefono = $request->telefono;
+      //  $person->email = $request->email;
+        $kidStudent->eps = $request->eps;
+        //$person->nombre_contacto_emergencia = $request->nombre_contacto_emergencia;
+        $kidStudent->numero_contacto_emergencia = $request->numero_contacto_emergencia;
+        $kidStudent->id_empresa = $request->id_empresa;
+        $kidStudent->tipo_vinculacion = $request->tipo_vinculacion;
+		$kidStudent->foto = $request->foto;
+        $kidStudent->save();
 
-        if($kidStudent->fails()) {
+       /* if($kidStudent->fails()) {
             return response()
                 ->json(['status' => '500', 'data' => $kidStudent->errors()]);
-        }
+        }*/
         
 
-        $user = auth()->user();
+        //$user = auth()->user();
 
         return response()
-                ->json(['status' => '500', 'data' => $user]);
+                ->json(['status' => '500', 'data' => $kidStudent]);
         if($user->user_type = 'Admin') {
             return response()
                 ->json(['status' => '500', 'data' => 'Soy Admin', $request->all()]);
@@ -206,6 +229,17 @@ class PersonaController extends Controller
             return response()
                 ->json(['status' => '500', 'data' => 'No soy Admin', $request->all()]);
         }
+
+
+    }
+
+	public function listStudents() 
+    {
+        $kidStudent = Persona::where('personas.user_type','!=','Profesor')
+        ->join('empresas','personas.id_empresa','=','empresas.id')
+        ->select('personas.*','empresas.nombre as nombre_empresa')
+        ->get();
+        return $kidStudent;
     }
 
     public function listGuardians()

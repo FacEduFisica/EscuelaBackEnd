@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PersonaController;
 use App\Http\Controllers\Api\CursoController;
 use App\Http\Controllers\Api\NoticiaController;
 use App\Http\Controllers\Api\EmpresaController;
+use App\Http\Controllers\Api\MatriculaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +66,8 @@ Route::group(['middleware'=>['actived.system','verified','auth:api']],function()
         //Actualizar Profesor
         Route::put('/profesor/{id}',[PersonaController::class,'updateTeacher']);
 
+
+
         //Cursos
         //Obtener Cursos
         Route::get('/cursos',[CursoController::class,'courses']);
@@ -88,10 +91,14 @@ Route::group(['middleware'=>['actived.system','verified','auth:api']],function()
         //Listar Acudientes
         Route::get('/acudientes',[PersonaController::class,'listGuardians']);
 
+		Route::post('/matricula',[MatriculaController::class,'store']);
+
+
         //Estudiantes
         //Registrar Niño
         Route::post('/estudiante/kid',[PersonaController::class,'storeKidStudent']);
-
+		//Obtener personas inscirtas
+		Route::get('/estudiantes',[PersonaController::class,'listStudents']);
         //Empresas
         //Crear Empresa
         Route::post('/empresas',[EmpresaController::class,'store']);
