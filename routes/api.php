@@ -24,7 +24,7 @@ use App\Http\Controllers\Api\MatriculaController;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('cors, auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
